@@ -6,13 +6,15 @@ const axios = require('axios');
 const axiosRetry = require('axios-retry');
 const inquirer = require('inquirer')
 
+const statusEnum = { Never: 1, InProgress: 2, Done: 3 };
+
 axiosRetry(axios, {
     retryDelay: 100 * axiosRetry.exponentialDelay,
     retries: 3
 });
 
 var totalHits = -1;
-var progressStatus = 0;//0:Never begun, 1:In progress, 2:Done
+var progressStatus = statusEnum.Never;// 0;//0:Never begun, 1:In progress, 2:Done
 var asking = 0;
 var selectedOption = "";
 
@@ -30,7 +32,7 @@ const baseURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-ke
 
 http.createServer(async function (req, res) {
 
-    if (progressStatus != 1 && asking == 0) {
+    if (progressStatus != statusEnum.InProgress && asking == 0) {
         asking = 1;
         var questions = [{
             type: 'input',
@@ -64,11 +66,11 @@ http.createServer(async function (req, res) {
  * Begin the requesting & parsing process if it's not kicked off yet
  */
 async function begin(res) {
-    if (progressStatus === 0) {
-        progressStatus = 1;
+    if (progressStatus === statusEnum.Never) {
+        progressStatus = statusEnum.InProgress;
         getAllData(res);
     }
-    else if (progressStatus === 2) {
+    else if (progressStatus === statusEnum.Done) {
         display();
     }
 }
@@ -88,7 +90,7 @@ async function getAllData(res) {
         if ((page * 10) >= totalHits) {
             clearInterval(requestInterval);
             display();
-            progressStatus = 2;
+            progressStatus = statusEnum.Done;
             return;
         }
         getOnePageData(page);
