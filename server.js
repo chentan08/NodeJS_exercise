@@ -188,7 +188,7 @@ function getAuthors(doc) {
         authors.push(fullName);
         updateAuthorArticleCount(fullName);
     }
-    return authors
+    return authors;
 }
 
 /**
@@ -237,9 +237,9 @@ function updateAuthorArticleCount(fullName) {
  * @param {object} person
  */
 function getFullName(person) {
-    const firstname = (person['firstname'] == null) ? "" : person['firstname'] + " ";
-    const middlename = (person['middlename'] == null) ? "" : person['middlename'] + " ";
-    const lastname = (person['lastname'] == null) ? "" : person['lastname'] + " ";
+    const firstname = (person['firstname'] === null) ? "" : person['firstname'] + " ";
+    const middlename = (person['middlename'] === null) ? "" : person['middlename'] + " ";
+    const lastname = (person['lastname'] === null) ? "" : person['lastname'] + " ";
     const fullName = firstname + middlename + lastname;
     return fullName.substring(0, fullName.length - 1);
 }
